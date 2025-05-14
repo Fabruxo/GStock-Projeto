@@ -54,6 +54,18 @@ public class Database {
             );
         """;
 
+        String sqlHistorico = """
+            CREATE TABLE IF NOT EXISTS historico_retiradas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_produto_estoque INTEGER NOT NULL,
+                quantidade_retirada REAL,
+                data_hora TEXT,
+                usuario TEXT,
+                FOREIGN KEY (id_produto_estoque) REFERENCES produtos_estoque(id)
+            );
+        """;
+
+
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
@@ -63,6 +75,7 @@ public class Database {
             stmt.execute(sqlProduto);
             stmt.execute(sqlEstoque);
             stmt.execute(sqlProdutoEstoque);
+            stmt.execute(sqlHistorico);
 
             System.out.println("Banco inicializado com sucesso!");
 

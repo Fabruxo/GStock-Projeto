@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ProdutoEstoqueDAO {
 
+// FUNÇÃO PARA APRESENTAR UM DETERMINADO PRODUTO NUM DETERMINADO ESTOQUE
     public void inserirProdutoEmEstoque(ProdutoEstoque pe) {
         String sql = "INSERT INTO produtos_estoque (id_produto, id_estoque, corredor, bin, quantidade) VALUES (?, ?, ?, ?, ?)";
 
@@ -29,6 +30,7 @@ public class ProdutoEstoqueDAO {
         }
     }
 
+// FUNÇÃO PARA APRESENTAR OS PRODUTOS EM DETERMINADOS ESTOQUES
     public List<ProdutoEstoque> listarProdutosEmEstoque() {
         List<ProdutoEstoque> lista = new ArrayList<>();
         String sql = """
@@ -77,7 +79,7 @@ public class ProdutoEstoqueDAO {
 
         return lista;
     }
-
+//FUNÇÃO PARA EDITAR UM PRODUTO EM ESTOQUE
     public void editarProdutoEmEstoque(ProdutoEstoque pe) {
         String sql = "UPDATE produtos_estoque SET corredor = ?, bin = ?, quantidade = ? WHERE id = ?";
 
@@ -96,6 +98,7 @@ public class ProdutoEstoqueDAO {
         }
     }
 
+// FUNÇÃO PARA DELETAR O PRODUTO DE ALGUM ESTOQUE PARA CASOS DE ADIÇÃO ERRONEA
     public void deletarProdutoEmEstoque(long id) {
         String sql = "DELETE FROM produtos_estoque WHERE id = ?";
 
@@ -110,4 +113,57 @@ public class ProdutoEstoqueDAO {
         }
     }
 
+// FUNÇÃO PARA RETIRAR UM PRODUTO DE UM ESTOQUE PARA SER UTILIZADO
+    public void retirarProdutoDoEstoque(long id, double quantidadeRetirada) {
+        String selectSql = "SELECT quantidade FROM produtos_estoque WHERE id = ?";
+        String updateSql = "UPDATE produtos_estoque SET quantidade = ? WHERE id = ?";
+        HistoricoRetirada historicoParaRegistrar = null;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+
+            selectStmt.setLong(1, id);
+            ResultSet rs = selectStmt.executeQuery();
+
+            if (rs.next()) {
+                double quantidadeAtual = rs.getDouble("quantidade");
+
+                if (quantidadeRetirada > quantidadeAtual) {
+                    System.out.println("❌ Quantidade insuficiente no estoque.");
+                    return;
+                }
+
+                double novaQuantidade = quantidadeAtual - quantidadeRetirada;
+
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                    updateStmt.setDouble(1, novaQuantidade);
+                    updateStmt.setLong(2, id);
+                    updateStmt.executeUpdate();
+                    updateStmt.executeUpdate();
+                    System.out.println("✅ Produto retirado com sucesso! Nova quantidade: " + novaQuantidade);
+                }
+
+                historicoParaRegistrar = new HistoricoRetirada(
+                        id,
+                        quantidadeRetirada,
+                        java.time.LocalDateTime.now().toString(),
+                        System.getProperty("user.name")
+                );
+
+            } else {
+                System.out.println("❌ ProdutoEstoque não encontrado.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao retirar produto: " + e.getMessage());
+        }
+        if (historicoParaRegistrar != null) {
+            HistoricoRetiradaDAO historicoDAO = new HistoricoRetiradaDAO();
+            historicoDAO.registrar(historicoParaRegistrar);
+        }
+    }
+
 }
+
+
+

@@ -3,110 +3,222 @@ import model.*;
 import util.Database;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         Database.inicializarBanco();
 
-        // --------- USUÁRIO ---------
         UsuarioDAO usuarioDAO = new UsuarioDAO();
-        Usuario admin = new UsuarioAdmin(0, "Heric", "admin", "123");
-        usuarioDAO.inserirUsuario(admin);
 
-        Usuario logado = usuarioDAO.buscarPorLoginSenha("admin", "123");
+        System.out.println("=== SISTEMA DE ESTOQUE ===");
+        System.out.print("Login: ");
+        String login = scanner.nextLine();
 
-        if (logado != null) {
-            System.out.println("Login realizado com sucesso!");
-            System.out.println("Bem-vindo, " + logado.getNome());
-            System.out.println("Tipo de usuário: " + logado.getTipoUsuario());
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
+
+        Usuario usuarioLogado = usuarioDAO.buscarPorLoginSenha(login, senha);
+
+        if (usuarioLogado == null) {
+            System.out.println("❌ Login inválido!");
+            return;
         }
 
-        // --------- PRODUTO ---------
-        ProdutoDAO produtoDAO = new ProdutoDAO();
-        Produto produto = new Produto("Filtro de Ar", "2010", "2020", "Civic");
-        produtoDAO.inserirProduto(produto);
+        System.out.println("\n✅ Bem-vindo, " + usuarioLogado.getNome() + " (" + usuarioLogado.getTipoUsuario() + ")");
 
-        // --------- ESTOQUE ---------
-        EstoqueDAO estoqueDAO = new EstoqueDAO();
-        Estoque estoque = new Estoque("Estoque Central", "Bloco A");
-        estoqueDAO.inserirEstoque(estoque);
-
-        // --------- PRODUTO ESTOCADO ---------
-        List<Produto> produtos = produtoDAO.listarProdutos();
-        List<Estoque> estoques = estoqueDAO.listarEstoques();
-
-        if (!produtos.isEmpty() && !estoques.isEmpty()) {
-            Produto produtoBD = produtos.get(0);
-            Estoque estoqueBD = estoques.get(0);
-
-            ProdutoEstoqueDAO peDAO = new ProdutoEstoqueDAO();
-            ProdutoEstoque pe = new ProdutoEstoque(produtoBD, estoqueBD, "C2", "BIN-03", 20.0);
-            peDAO.inserirProdutoEmEstoque(pe);
-
-            // --------- LISTAR PRODUTOS EM ESTOQUE ---------
-            System.out.println("\nProdutos em Estoque:");
-            for (ProdutoEstoque item : peDAO.listarProdutosEmEstoque()) {
-                System.out.println("Produto: " + item.getProduto().getNome());
-                System.out.println("Modelo: " + item.getProduto().getModeloCarro());
-                System.out.println("Estoque: " + item.getEstoque().getNome());
-                System.out.println("Corredor: " + item.getCorredor());
-                System.out.println("Bin: " + item.getBin());
-                System.out.println("Quantidade: " + item.getQuantidade());
-                System.out.println("---------------------------");
-            }
+        if (usuarioLogado instanceof UsuarioAdmin) {
+            menuAdmin();
         } else {
-            System.out.println("⚠️ Nenhum produto ou estoque encontrado.");
+            menuUsuarioComum();
         }
+    }
 
-        // ----------- EDIÇÃO -----------
-
-        // Editar Produto
-        if (!produtos.isEmpty()) {
-            Produto produtoEdit = produtos.get(0);
-            produtoEdit.setId(produtoEdit.getId());
-            produtoEdit = new Produto(produtoEdit.getId(), "Filtro de Cabine", "2011", "2022", "Civic");
-            produtoDAO.editarProduto(produtoEdit);
-        }
-
-        // Editar Estoque
-        if (!estoques.isEmpty()) {
-            Estoque estoqueEdit = estoques.get(0);
-            estoqueEdit = new Estoque(estoqueEdit.getId(), "Estoque Atualizado", "Setor B");
-            estoqueDAO.editarEstoque(estoqueEdit);
-        }
-
-        // Editar Produto em Estoque
+    private static void menuAdmin() {
+        ProdutoDAO produtoDAO = new ProdutoDAO();
+        EstoqueDAO estoqueDAO = new EstoqueDAO();
         ProdutoEstoqueDAO peDAO = new ProdutoEstoqueDAO();
-        List<ProdutoEstoque> listaEstoque = peDAO.listarProdutosEmEstoque();
 
-        if (!listaEstoque.isEmpty()) {
-            ProdutoEstoque peEdit = listaEstoque.get(0);
-            peEdit.setCorredor("D1");
-            peEdit.setBin("BIN-99");
-            peEdit.setQuantidade(peEdit.getQuantidade() + 10);
-            peDAO.editarProdutoEmEstoque(peEdit);
-        }
+        int opcao;
+        do {
+            System.out.println("\n=== MENU ADMIN ===");
+            System.out.println("1. Cadastrar Produto");
+            System.out.println("2. Cadastrar Estoque");
+            System.out.println("3. Vincular Produto ao Estoque");
+            System.out.println("4. Listar Produtos");
+            System.out.println("5. Listar Estoques");
+            System.out.println("6. Listar Produtos em Estoque");
+            System.out.println("7. Retirar Produto do Estoque");
+            System.out.println("8. Ver Histórico de Retiradas");
+            System.out.println("0. Sair");
+            System.out.print("Escolha uma opção: ");
+            opcao = Integer.parseInt(scanner.nextLine());
 
-        // ----------- EXCLUSÃO -----------
+            switch (opcao) {
+                case 1 -> {
+                    System.out.print("Nome do produto: ");
+                    String nome = scanner.nextLine();
+                    System.out.print("Ano início: ");
+                    String inicio = scanner.nextLine();
+                    System.out.print("Ano fim: ");
+                    String fim = scanner.nextLine();
+                    System.out.print("Modelo carro: ");
+                    String modelo = scanner.nextLine();
 
-        // Excluir Produto em Estoque
-        if (!listaEstoque.isEmpty()) {
-            ProdutoEstoque peDelete = listaEstoque.get(0);
-            peDAO.deletarProdutoEmEstoque(peDelete.getId());
-        }
+                    Produto produto = new Produto(nome, inicio, fim, modelo);
+                    produtoDAO.inserirProduto(produto);
+                }
 
-        // Excluir Produto
-        if (!produtos.isEmpty()) {
-            Produto produtoDelete = produtos.get(0);
-            produtoDAO.deletarProduto(produtoDelete.getId());
-        }
+                case 2 -> {
+                    System.out.print("Nome do estoque: ");
+                    String nome = scanner.nextLine();
+                    System.out.print("Posição: ");
+                    String posicao = scanner.nextLine();
 
-        // Excluir Estoque
-        if (!estoques.isEmpty()) {
-            Estoque estoqueDelete = estoques.get(0);
-            estoqueDAO.deletarEstoque(estoqueDelete.getId());
-        }
+                    Estoque estoque = new Estoque(nome, posicao);
+                    estoqueDAO.inserirEstoque(estoque);
+                }
 
+                case 3 -> {
+                    List<Produto> produtos = produtoDAO.listarProdutos();
+                    List<Estoque> estoques = estoqueDAO.listarEstoques();
 
+                    if (produtos.isEmpty() || estoques.isEmpty()) {
+                        System.out.println("⚠️ Cadastre produtos e estoques antes.");
+                        break;
+                    }
+
+                    System.out.println("Produtos:");
+                    for (Produto p : produtos) {
+                        System.out.println(p.getId() + " - " + p.getNome());
+                    }
+
+                    System.out.print("ID do produto: ");
+                    long idProduto = Long.parseLong(scanner.nextLine());
+                    Produto produto = produtos.stream().filter(p -> p.getId() == idProduto).findFirst().orElse(null);
+
+                    System.out.println("Estoques:");
+                    for (Estoque e : estoques) {
+                        System.out.println(e.getId() + " - " + e.getNome());
+                    }
+
+                    System.out.print("ID do estoque: ");
+                    long idEstoque = Long.parseLong(scanner.nextLine());
+                    Estoque estoque = estoques.stream().filter(e -> e.getId() == idEstoque).findFirst().orElse(null);
+
+                    if (produto == null || estoque == null) {
+                        System.out.println("❌ Produto ou Estoque inválido.");
+                        break;
+                    }
+
+                    System.out.print("Corredor: ");
+                    String corredor = scanner.nextLine();
+                    System.out.print("Bin: ");
+                    String bin = scanner.nextLine();
+                    System.out.print("Quantidade: ");
+                    double qtd = Double.parseDouble(scanner.nextLine());
+
+                    ProdutoEstoque pe = new ProdutoEstoque(produto, estoque, corredor, bin, qtd);
+                    peDAO.inserirProdutoEmEstoque(pe);
+                }
+
+                case 4 -> {
+                    System.out.println("\n--- Produtos ---");
+                    for (Produto p : produtoDAO.listarProdutos()) {
+                        System.out.println(p.getId() + " - " + p.getNome() + " (" + p.getModeloCarro() + ")");
+                    }
+                }
+
+                case 5 -> {
+                    System.out.println("\n--- Estoques ---");
+                    for (Estoque e : estoqueDAO.listarEstoques()) {
+                        System.out.println(e.getId() + " - " + e.getNome() + " - " + e.getPosicao());
+                    }
+                }
+
+                case 6 -> {
+                    System.out.println("\n--- Produtos em Estoque ---");
+                    for (ProdutoEstoque pe : peDAO.listarProdutosEmEstoque()) {
+                        System.out.println("Produto: " + pe.getProduto().getNome() +
+                                " | Estoque: " + pe.getEstoque().getNome() +
+                                " | Qtd: " + pe.getQuantidade() +
+                                " | Corredor: " + pe.getCorredor() +
+                                " | Bin: " + pe.getBin());
+                    }
+                }
+
+                case 7 -> {
+                    List<ProdutoEstoque> lista = peDAO.listarProdutosEmEstoque();
+
+                    if (lista.isEmpty()) {
+                        System.out.println("⚠️ Nenhum produto em estoque para retirar.");
+                        break;
+                    }
+
+                    System.out.println("\n--- Produtos em Estoque ---");
+                    for (ProdutoEstoque pe : lista) {
+                        System.out.println(pe.getId() + " - " + pe.getProduto().getNome() +
+                                " | Estoque: " + pe.getEstoque().getNome() +
+                                " | Quantidade: " + pe.getQuantidade());
+                    }
+
+                    System.out.print("ID do ProdutoEstoque para retirar: ");
+                    long idRetirar = Long.parseLong(scanner.nextLine());
+
+                    System.out.print("Quantidade a retirar: ");
+                    double qtdRetirar = Double.parseDouble(scanner.nextLine());
+
+                    peDAO.retirarProdutoDoEstoque(idRetirar, qtdRetirar);
+                }
+                case 8 -> {
+                    HistoricoRetiradaDAO historicoDAO = new HistoricoRetiradaDAO();
+                    List<HistoricoRetirada> historico = historicoDAO.listar();
+
+                    System.out.println("\n--- Histórico de Retiradas ---");
+                    for (HistoricoRetirada h : historico) {
+                        System.out.println("ID ProdutoEstoque: " + h.getIdProdutoEstoque() +
+                                " | Quantidade: " + h.getQuantidadeRetirada() +
+                                " | Data: " + h.getDataHora() +
+                                " | Usuário: " + h.getUsuario());
+                    }
+                }
+
+                case 0 -> System.out.println("Saindo...");
+                default -> System.out.println("❌ Opção inválida.");
+            }
+
+        } while (opcao != 0);
+    }
+
+    private static void menuUsuarioComum() {
+        ProdutoEstoqueDAO peDAO = new ProdutoEstoqueDAO();
+
+        int opcao;
+        do {
+            System.out.println("\n=== MENU USUÁRIO COMUM ===");
+            System.out.println("1. Ver Produtos em Estoque");
+            System.out.println("0. Sair");
+            System.out.print("Escolha uma opção: ");
+            opcao = Integer.parseInt(scanner.nextLine());
+
+            switch (opcao) {
+                case 1 -> {
+                    System.out.println("\n--- Produtos em Estoque ---");
+                    for (ProdutoEstoque pe : peDAO.listarProdutosEmEstoque()) {
+                        System.out.println("Produto: " + pe.getProduto().getNome() +
+                                " | Estoque: " + pe.getEstoque().getNome() +
+                                " | Qtd: " + pe.getQuantidade() +
+                                " | Corredor: " + pe.getCorredor() +
+                                " | Bin: " + pe.getBin());
+                    }
+                }
+
+                case 0 -> System.out.println("Saindo...");
+                default -> System.out.println("❌ Opção inválida.");
+            }
+
+        } while (opcao != 0);
     }
 }
