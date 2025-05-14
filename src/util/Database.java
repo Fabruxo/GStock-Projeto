@@ -23,10 +23,47 @@ public class Database {
             );
         """;
 
+        String sqlProduto = """
+            CREATE TABLE IF NOT EXISTS produtos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL,
+                anoSuportadoInicio TEXT,
+                anoSuportadoFim TEXT,
+                modeloCarro TEXT
+            );
+        """;
+
+        String sqlEstoque = """
+            CREATE TABLE IF NOT EXISTS estoques (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL,
+                posicao TEXT
+            );
+        """;
+
+        String sqlProdutoEstoque = """
+            CREATE TABLE IF NOT EXISTS produtos_estoque (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_produto INTEGER NOT NULL,
+                id_estoque INTEGER NOT NULL,
+                corredor TEXT,
+                bin TEXT,
+                quantidade REAL,
+                FOREIGN KEY (id_produto) REFERENCES produtos(id),
+                FOREIGN KEY (id_estoque) REFERENCES estoques(id)
+            );
+        """;
+
+
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
 
             stmt.execute(sqlUsuario);
+            stmt.execute(sqlUsuario);
+            stmt.execute(sqlProduto);
+            stmt.execute(sqlEstoque);
+            stmt.execute(sqlProdutoEstoque);
+
             System.out.println("Banco inicializado com sucesso!");
 
         } catch (SQLException e) {
