@@ -96,7 +96,37 @@ Histórico de Movimentações
 
 ## Cronograma
 
-A ser realizado
+### 21/03 a 03/04
+* Criação do banco de dados SQLite
+* Implementação da conexão com o banco (Database.java)
+* Criação da entidade Usuario
+* Implementação do UsuarioDAO com operações de cadastro e login
+* Estrutura inicial do Main.java com menu de autenticação
+
+### 04/04 a 17/04
+* Criação da entidade Produto e implementação do ProdutoDAO com CRUD
+* Criação da entidade Estoque e implementação do EstoqueDAO com CRUD
+* Integração dos cadastros no menu principal
+* Validação de entradas e IDs
+
+### 18/04 a 01/05
+* Criação da entidade ProdutoEstoque
+* Implementação do ProdutoEstoqueDAO com suas funções
+* Integração dessas funções no menu do sistema
+
+### 02/05 a 15/05
+* Implementação da função de retirar produto do estoque
+* Criação da entidade HistoricoRetirada
+* Implementação do HistoricoRetiradaDAO para registrar retiradas com data, quantidade e usuário
+* Integração da retirada no menu principal
+* Correção de erros e ajustes de fluxo
+
+### 16/05 a 23/05
+* Testes completos de todas as funcionalidades
+* Organização final das classes e pacotes
+* Refatoração leve para clareza e padronização de código
+
+O Cronograma acima diz respeito apenas as tarefas de desenvolvimento do sistema.
 
 ## Materiais e Métodos
 
@@ -332,3 +362,90 @@ Segue abaixo o código da classe ProdutoEstoqueDAO:
             }
         
         }
+
+        
+        
+### Conclusão
+
+
+Impacto do sistema: o sistema auxiliou o cliente no controle e mapeamento do estoque e economia de tempo e gastos \
+Melhorias Futuras: interface gráfica, controle de compra de produtos em falta, criar funções para usuários comuns e administrativos
+
+
+### Homologação do MVP junto ao cliente
+
+
+Após as entregas parciais, realizadas de acordo com os requisitos do sistema  e cronograma, o MVP foi apresentado em uma reunião, realizada entre o time de desenvolvedores e o cliente.
+
+![adb94965-7077-4ffd-b53b-f5b3302f1b9e](https://github.com/user-attachments/assets/8e029642-9feb-40d8-982e-ef12736cc72c)
+Da esquerda para direita: Heric controlando o sistema durante a apresentação, Victor à esquerda e Fabrício à direita.
+
+![27398897-4e8a-4338-ba14-68f2537155bc](https://github.com/user-attachments/assets/5105268c-9008-4e10-8851-4d7ebb764fd0)
+Victor Hugo, nosso integrante e cliente, realizando falando sobre a necessidade de seu cliente final.
+
+![8cb78d4d-2554-42ed-86e3-128af6f795dc](https://github.com/user-attachments/assets/d1f073f0-6d94-4462-8f53-0ea15e6b7eea)
+Fabrício apresentando alguma funções implementadas no GSock.
+
+
+
+
+
+Segue abaixo a lista de presentes na homologação do MVP.
+
+Lista de presentes na Homologação
+| Nome                                      | Matrícula     |
+|-------------------------------------------|---------------|
+| Adriano de Sousa Ramos                    | 202302381219  |
+| Aline Silveira Cordeiro                   | 202302376533  |
+| André Lucas Martins Ezequie               | 202402810201  |
+| Beatriz Colombo de Oliveira               | 202303878451  |
+| Bianca Pessin Avelino                     | 202302377076  |
+| Breno Zachello Oliveira                   | 202202455601  |
+| Caick Bertin Viana                        | 202302773664  |
+| Daniel Servino da Rocha                   | 202302381464  |
+| Derek Bergesch                            | 202303321279  |
+| Douglas Carlos de Castro                  | 202202771309  |
+| Eduardo Alejandro Meli Aracena Bello      | 202303413572  |
+| Emilly Araújo Marques                     | 202303801841  |
+| Fabrício Amorim dos Santos                | 202302857957  |
+| Felipe Orpheu Santoro Vasconcelos         | 202202389706  |
+| Fernando Ferreira da Silva                | 202208700195  |
+| Fernando Rodrigues de Sousa               |               |
+| Gabriel Cangiani                          | 202304302723  |
+| Gabriel de Oliveira Lima                  | 202302381261  |
+| Gabriel Juliani Arroyo                    | 202302784471  |
+| Guilherme Afonso da Silva Ferrari         | 202302468659  |
+| Guilherme Martins Spiandorin              | 202302381359  |
+| Heric Prestelo Pedro                      | 202302382479  |
+| Jennifer de Oliveira                      | 202103014411  |
+| João Alexandre Nunes Belchior             | 202303467079  |
+| João Henrique Augait do Nascimento        | 202202782671  |
+| João Pedro Dumbra Sturla                  | 202302424856  |
+| João Victor Tourinho dos Santos           | 202308428489  |
+| Leonardo Hideki Kuriki                    | 202302381431  |
+| Lucas Ferreira Ascioni                    | 202108617806  |
+| Lucas Guilherme Silva                     | 202303886241  |
+| Lucas Guthierrez Oliver                   | 202208700292  |
+| Lucas Ryan Rodrigues Barbosa              | 202303181493  |
+| Lucas Silva do Carmo                      | 202202834181  |
+| Lucas de Souza Pereira                    | 202303152035  |
+| Luiz Gustavo de Lara Freschi              | 202303112581  |
+| Marcos Vinicius Cardoso Correa            | 202204018292  |
+| Matheus Azevedo Rosa                      | 202204156326  |
+| Matheus Ramos Marcolino                   | 202302376819  |
+| Michael de Souza da Silva                 | 202308396382  |
+| Natalia Policeno                          | 202304086826  |
+| Paulo Henrique Angelino Braga             | 202302380026  |
+| Pedro Daniel Marques                      | 202302892523  |
+| Pedro Henrique da Silva dos Santos        | 202403070049  |
+| Sabrina Ribeiro Guimarães dos Santos      | 202203181076  |
+| Samuel Bernardes                          | 202303459696  |
+| Thiago Moscatini Carvalho                 | 202302382428  |
+| Tonislau Domingos Quissanga               | 202208700519  |
+| Victor Hugo Brito Marião                  | 202304086826  |
+| Vinícius Teixeira Tamasaukas              | 202302381642  |
+| Wellington José de Lima                   | 202302380921  |
+
+
+Ao final da apresentação, o sistema  foi homologado pelo cliente.
+
